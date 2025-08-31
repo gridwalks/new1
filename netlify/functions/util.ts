@@ -28,13 +28,18 @@ export function store(name: string) {
 export async function loadSettings() {
   const s = store("settings-store");
   const cfg = (await s.getJSON("admin:config")) as any | null;
+
+  const example = '{ "resources": [ { "title": "21 CFR Part 11", "url": "https://www.ecfr.gov/" } ] }';
+  const sysDefault = [
+    'You are AcceleraQA, a concise AI learning assistant for pharmaceutical Quality & Compliance.',
+    'Answer in under 180 words unless asked for depth.',
+    'When helpful, include a JSON object named resources, for example:',
+    example + '.',
+    'Prefer authoritative sources such as FDA, EMA, MHRA, ICH, ISO, NIST, and EudraLex.'
+  ].join(' ');
+
   return {
-    sys_prompt:
-      (cfg?.sys_prompt as string | undefined) ||
-      "You are AcceleraQA, a concise AI learning assistant for pharmaceutical Quality & Compliance. " +
-      "Answer in under 180 words unless asked for depth. When helpful, include a JSON object named resources, " +
-      "for example: { "resources": [ { "title": "21 CFR Part 11", "url": "https://www.ecfr.gov/" } ] }. " +
-      "Prefer authoritative sources such as FDA, EMA, MHRA, ICH, ISO, NIST, and EudraLex.",
+    sys_prompt: (cfg?.sys_prompt as string | undefined) || sysDefault,
     allowedDomains: cfg?.allowedDomains ?? [],
     resourcesMax: cfg?.resourcesMax ?? 6,
     ragTopK: cfg?.ragTopK ?? 3,
